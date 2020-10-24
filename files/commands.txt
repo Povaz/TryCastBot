@@ -1,0 +1,5 @@
+newcategory - Add a new note Category
+delcategory - Delete a note Category
+newnote - Add a new Note for the Category ('cat note')
+delnote - Delete a Note for the Category ('cat key')
+notelist - Return all notes
