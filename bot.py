@@ -117,6 +117,7 @@ def main():
     dp.add_handler(CommandHandler("newnote", newnote))
     dp.add_handler(CommandHandler("delnote", delnote))
     dp.add_handler(CommandHandler("notelist", notelist))
+    dp.add_handler(CommandHandler("help", help))
 
     # Add Handler for messages not recognized
     dp.add_handler(MessageHandler(Filters.text & ~Filters.command, notfound))
