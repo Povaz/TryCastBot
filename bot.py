@@ -77,6 +77,22 @@ def notelist(update, context):
         raise Exception
 
 
+def help(update, context):
+    """Get the list of all Notes"""
+    global categories
+    try:
+        msg = '/newcategory _categoryname_: Add a new note Category.\n' \
+              '/delcategory _categoryname_: Delete a note Category. \n' \
+              '/newnote _categoryname note_: Add a new Note for the Category. \n' \
+              '/delnote _categoryname noteid_: Delete a Note for the Category. \n' \
+              '/notelist: Return all notes. \n' \
+              '/help: Return all commands. \n'
+        update.message.reply_text(msg, parse_mode='Markdown')
+    except Exception:
+        update.message.reply_text('Unexpected Shit happened!', parse_mode='Markdown')
+        raise Exception
+
+
 # Unrecognized command
 def notfound(update, context):
     """Command not recognized"""
