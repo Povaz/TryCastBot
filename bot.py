@@ -40,7 +40,9 @@ def newnote(update, context):
     global categories
     try:
         cat_name = context.args[0]
-        note_text = context.args[1]
+        note_text = ''
+        for arg in context.args[1:]:
+            note_text += arg + ' '
         cat = [cat for cat in categories if cat.name == cat_name][0]
         cat.add_note(note_text)
         update.message.reply_text('Note added!', parse_mode='Markdown')
