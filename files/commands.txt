@@ -4,3 +4,5 @@ newnote - Add a new Note for the Category ('cat note')
 delnote - Delete a Note for the Category ('cat key')
 notelist - Return all notes
 help - Return all commands' description
+set - Sets a timer to return the list of all notes
+unset - Unset a timer if it exists

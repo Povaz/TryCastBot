@@ -1,5 +1,9 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from category import *
+from timer_utils import *
+import datetime
+from pytz import UTC
+
 categories = []
 
 
@@ -79,6 +83,17 @@ def notelist(update, context):
         raise Exception
 
 
+def notelist_timed(context):
+    """Timed function to return the list of Notes."""
+    global categories
+    msg = ''
+    for cat in categories:
+        msg += cat.get_text() + '\n'
+    job = context.job
+    sent = context.bot.send_message(job.context, text=msg, parse_mode='Markdown')
+    context.bot.pin_chat_message(chat_id=job.name, message_id=sent.message_id)
+
+
 def help(update, context):
     """Get the list of all Notes"""
     global categories
@@ -93,6 +108,34 @@ def help(update, context):
     except Exception:
         update.message.reply_text('Unexpected Shit happened!', parse_mode='Markdown')
         raise Exception
+
+
+def set_timer(update, context):
+    """Add a job to the queue."""
+    chat_id = update.message.chat_id
+    try:
+        hour = int(context.args[0] - 1)
+        min = int(context.args[1])
+
+        job_removed = remove_job_if_exists(str(chat_id), context)
+        context.job_queue.run_daily(notelist_timed, time=datetime.time(hour=hour, minute=min, second=0, microsecond=0,
+                                                                       tzinfo=UTC), context=chat_id, name=str(chat_id))
+
+        text = 'Timer successfully set!'
+        if job_removed:
+            text += ' Old one was removed.'
+        update.message.reply_text(text)
+
+    except (IndexError, ValueError):
+        update.message.reply_text('Usage: /set <seconds>')
+
+
+def unset_timer(update, context):
+    """Remove the job if the user changed their mind."""
+    chat_id = update.message.chat_id
+    job_removed = remove_job_if_exists(str(chat_id), context)
+    text = 'Timer successfully cancelled!' if job_removed else 'You have no active timer.'
+    update.message.reply_text(text)
 
 
 # Unrecognized command
@@ -121,8 +164,8 @@ def main():
     dp.add_handler(CommandHandler("notelist", notelist))
     dp.add_handler(CommandHandler("help", help))
 
-    # Add Handler for messages not recognized
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, notfound))
+    dp.add_handler(CommandHandler("set", set_timer))
+    dp.add_handler(CommandHandler("unset", unset_timer))
 
     # Start the Bot Polling
     updater.start_polling()
