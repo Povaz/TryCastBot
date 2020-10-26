@@ -114,7 +114,7 @@ def set_timer(update, context):
     """Add a job to the queue."""
     chat_id = update.message.chat_id
     try:
-        hour = int(context.args[0] - 1)
+        hour = int(context.args[0]) - 1
         min = int(context.args[1])
 
         job_removed = remove_job_if_exists(str(chat_id), context)
